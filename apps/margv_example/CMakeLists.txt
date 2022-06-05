@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 add_executable(${PROJECT_NAME}
-    src/hello_margv.cpp
+    src/main.cpp
 )
 
 target_link_libraries(${PROJECT_NAME} margv)

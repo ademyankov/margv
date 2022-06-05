@@ -1,1 +1,1 @@
-add_subdirectory(hello_margv)
+add_subdirectory(margv_example)
