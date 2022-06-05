@@ -36,3 +36,11 @@ cd build/x86
 cmake ../..
 make
 ```
+
+## Run example app
+
+To see all the sample options available, run:
+
+```sh
+./argv
+```
