@@ -45,9 +45,9 @@ namespace margv {
 
                 if (std::get<4>(it->second)) ++exclusive;
                 if (std::get<3>(it->second) == ArgValue::NotRequired) continue;
-                if (std::get<3>(it->second) == ArgValue::Required)
+                if (std::get<3>(it->second) == ArgValue::Required) {
                     if (++i >= argc || argv[i][0] == '-') return -1;
-                else if (std::get<3>(it->second) == ArgValue::Optional) {
+                } else if (std::get<3>(it->second) == ArgValue::Optional) {
                     if (i + 1 >= argc || argv[i + 1][0] == '-') continue;
                     ++i;
                 } else return -1;
@@ -58,14 +58,21 @@ namespace margv {
             return exclusive ? 0 : -1;
         }
 
-        // Add an optional & exclusive parameter
+        // Add an exclusive switch with an optional parameter;
+        // Exclusive switch means that at least one exclusive switch is
+        // required to be present in the command line arguments list
         int add_optional(const std::string& arg) {
             return add(arg, "", ArgValue::Optional, true);
         }
 
-        // Add a required & exclusive parameter
+        // Add an exclusive switch with a required parameter
         int add_required(const std::string& arg) {
             return add(arg, "", ArgValue::Required, true);
+        }
+
+        // Add an optional true switch
+        int add_switch(const std::string& arg) {
+            return add(arg, "", ArgValue::NotRequired, false);
         }
 
         int add(const std::string& arg, const std::string& default_value, ArgValue param = ArgValue::NotRequired, bool exclusive = false) {
@@ -76,10 +83,6 @@ namespace margv {
 
         int add(const char* arg, const char* default_value) {
             return add(arg, default_value, ArgValue::Required, false);
-        }
-
-        int add(const char* arg) {
-            return add(arg, "", ArgValue::NotRequired, false);
         }
 
         int add(const char* arg, bool exclusive) {

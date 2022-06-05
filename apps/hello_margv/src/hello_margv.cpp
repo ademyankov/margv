@@ -2,17 +2,27 @@
 
 #include <margv/margv.hpp>
 
+#include <string>
+
+using namespace std;
+
 static
 void usage()
 {
     printf(
-        "usage: Session [-d] [-l LIFETIME-SECONDS] [-addr SERVER-ADDRESS] [-message MSG]\n"
-        "   {-setup [SERVER-ADDRESS] | -server | -check | -remove} [EPS-NAME]\n\n"
-        "These are common Session commands used in various situations:\n\n"
-        "working with an XPN session\n"
-        "   server [EPS-NAME]         Create a new XPN server instance on localhost with\n"
-        "                             EPS-NAME specified as an optional parameter; if not\n"
-        "                             specified the default 'EPS0' is used\n"
+        "usage: margv [-d] [-s] STRING [-l] VALUE\n"
+        "             { -optA [param], -optB [param], -req param }\n\n"
+        "These are common examples how to use it:\n"
+        "\n"
+        "-optA [param]          An exclusive optional switch with an optional parameter \n"
+        "-optB [param]\n"
+        "\n"
+        "-req param             An exclusive optional switch with a required parameter\n"
+        "\n"
+        "[-d]                   An optional simple true switch\n"
+        "\n"
+        "[-s] string            An optional switch with a required parameter;\n"
+        "[-l] param             if not present the default value is used\n"
         "\n"
     );
 
@@ -23,31 +33,38 @@ int main(int argc, char** argv)
 {
     margv::argv arg;
 
-    arg.add_optional("server");
-    arg.add_optional("setup");
-    arg.add_optional("check");
-    arg.add_optional("remove");
+    // An exclusive optional switch with an optional parameter;
+    arg.add_optional("optA");
+    arg.add_optional("optB");
 
-    arg.add_required("message");
+    // An exclusive optional switch with a required parameter;
+    // has empty string if not present
+    arg.add_required("req");
 
-    arg.add("addr", "https://ec2-34-209-177-147.us-west-2.compute.amazonaws.com:8443/stsxpnserver-1.0-SNAPSHOT/stsxpn-servlet");
-    arg.add("f", "b");
-    arg.add("l", "0");
-    arg.add("d");
+    // An optional simple true switch; false if not present
+    arg.add_switch("d");
+
+    // An optional switch with a required parameter;
+    // if not present the default value is used
+    arg.add("s", "default string");
+    arg.add("l", "42");
 
     if (arg.parse(argc, argv)) usage();
 
-    auto server = arg.get<bool>("server");
-    auto setup  = arg.get<bool>("setup");
-    auto check  = arg.get<bool>("check");
-    auto remove = arg.get<bool>("remove");
-    auto debug  = arg.get<bool>("d");
+    auto optA = arg.get<bool>("optA");
+    auto optB = arg.get<bool>("optB");
+    auto req  = arg.get<bool>("req");
+    auto d    = arg.get<bool>("d");
+    auto s    = arg.get<string>("s");
+    auto l    = arg.get<int>("l");
 
-    using namespace std;
+    if (optA) printf("optA: %s\n", arg.get<string>("optA").c_str());
+    if (optB) printf("optB: %s\n", arg.get<string>("optB").c_str());
+    if (req)  printf("req: %s\n", arg.get<string>("req").c_str());
 
-    auto address  = arg.get<string>("addr");
-    auto message  = arg.get<string>("message");
-    auto flags    = arg.get<string>("f");
+    printf("d: %s\n", d ? "true" : "false");
+    printf("s: %s\n", s.c_str());
+    printf("l: %d\n", l);
 
     return 0;
 }
