@@ -14,7 +14,6 @@
 #include <string>
 
 namespace margv {
-
     namespace detail {
         template <typename T> T get(bool, const std::string&, const std::string&) {}
         template <> inline bool get<bool>(bool is, const std::string&, const std::string&) { return is; }
@@ -85,14 +84,6 @@ namespace margv {
             return add(arg, default_value, ArgValue::Required, false);
         }
 
-        int add(const char* arg, bool exclusive) {
-            return add(arg, "", ArgValue::NotRequired, exclusive);
-        }
-
-        int add(const char* arg, ArgValue param, bool exclusive) {
-            return add(arg, "", param, exclusive);
-        }
-
         template <typename T> T get(const std::string& arg) {
             if (kvm_.find(arg) == kvm_.end()) return detail::get<T>(false, "", "");
             auto it = kvm_[arg];
@@ -104,5 +95,4 @@ namespace margv {
         typedef std::tuple<bool, std::string, std::string, ArgValue, bool> ex_;
         std::map<std::string, ex_> kvm_;
     };
-
 }
